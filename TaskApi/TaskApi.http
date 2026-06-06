@@ -1,0 +1,31 @@
+@TaskApi_HostAddress = https://localhost:7154
+
+### Get all tasks
+GET {{TaskApi_HostAddress}}/api/tasks
+Accept: application/json
+
+### Get task by id
+GET {{TaskApi_HostAddress}}/api/tasks/1
+Accept: application/json
+
+### Create a task
+POST {{TaskApi_HostAddress}}/api/tasks
+Content-Type: application/json
+
+{
+  "title": "New test title",
+  "description": "Build a Web API with EF Core"
+}
+
+### Update a task
+PUT {{TaskApi_HostAddress}}/api/tasks/1
+Content-Type: application/json
+
+{
+  "title": "Learn ASP.NET Core",
+  "description": "Build a Web API with EF Core",
+  "isComplete": true
+}
+
+### Delete a task
+DELETE {{TaskApi_HostAddress}}/api/tasks/1
