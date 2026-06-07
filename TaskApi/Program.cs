@@ -14,8 +14,18 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"))
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("DefaultConnection is not configured.");
+
+if (!builder.Environment.IsDevelopment()
+    && connectionString.Contains("localdb", StringComparison.OrdinalIgnoreCase))
+{
+    throw new InvalidOperationException(
+        "Production cannot use LocalDB. Set DefaultConnection in Azure App Service connection strings.");
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();

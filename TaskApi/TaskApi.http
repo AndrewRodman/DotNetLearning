@@ -1,4 +1,4 @@
-@TaskApi_HostAddress = https://localhost:7154
+@TaskApi_HostAddress = https://taskapi-andrew.azurewebsites.net
 
 ###############################################
 # STEP 1: Register — RUN THIS FIRST (before Login)
@@ -65,7 +65,7 @@ Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
-  "title": "Learn JWT auth",
+  "title": "AZURE2 Learn JWT auth",
   "description": "Stage 3 auth complete"
 }
 
