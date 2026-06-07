@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TaskApp.Pages.LoginPage"
+             Title="Login">
+
+    <VerticalStackLayout Padding="24" Spacing="12">
+        <Label Text="Task App"
+               FontSize="28"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
+
+        <Label Text="Sign in to your TaskApi account"
+               HorizontalOptions="Center"
+               TextColor="Gray" />
+
+        <Entry x:Name="UsernameEntry"
+               Placeholder="Username"
+               Text="demo" />
+
+        <Entry x:Name="PasswordEntry"
+               Placeholder="Password"
+               IsPassword="True"
+               Text="Password123" />
+
+        <Label x:Name="ErrorLabel"
+               TextColor="Red"
+               IsVisible="False" />
+
+        <Button Text="Login"
+                Clicked="OnLoginClicked" />
+
+        <Button Text="Register"
+                Clicked="OnRegisterClicked"
+                BackgroundColor="Gray" />
+
+        <Label Text="Start TaskApi first (F5 on TaskApi project)"
+               FontSize="12"
+               TextColor="Gray"
+               HorizontalOptions="Center" />
+    </VerticalStackLayout>
+
+</ContentPage>

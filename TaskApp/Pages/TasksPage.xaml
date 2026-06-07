@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:TaskApp.Models"
+             x:Class="TaskApp.Pages.TasksPage"
+             Title="My Tasks">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="12">
+        <HorizontalStackLayout Grid.Row="0" Spacing="8">
+            <Button Text="Refresh" Clicked="OnRefreshClicked" />
+            <Button Text="Logout" Clicked="OnLogoutClicked" BackgroundColor="Gray" />
+        </HorizontalStackLayout>
+
+        <CollectionView x:Name="TasksCollection"
+                        Grid.Row="1"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:TaskItem">
+                    <VerticalStackLayout Padding="8" Spacing="4">
+                        <HorizontalStackLayout Spacing="8">
+                            <CheckBox IsChecked="{Binding IsComplete}"
+                                      CheckedChanged="OnTaskCompleteChanged" />
+                            <Label Text="{Binding Title}"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding Description}"
+                               TextColor="Gray"
+                               FontSize="12" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="2" Spacing="8">
+            <Entry x:Name="NewTitleEntry" Placeholder="New task title" />
+            <Entry x:Name="NewDescriptionEntry" Placeholder="Description (optional)" />
+            <Button Text="Add Task" Clicked="OnAddTaskClicked" />
+            <Label x:Name="StatusLabel" TextColor="Red" IsVisible="False" />
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>

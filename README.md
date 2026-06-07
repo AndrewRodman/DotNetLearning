@@ -7,6 +7,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 ## Tech stack
 
 - **.NET 10** / ASP.NET Core Web API
+- **.NET MAUI** mobile client (`TaskApp`)
 - **Entity Framework Core** + SQLite
 - **JWT Bearer** authentication
 - **xUnit**, **Moq**, EF Core InMemory (tests)
@@ -18,6 +19,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - JWT-protected task endpoints
 - Full CRUD on tasks
 - Optional filter: `GET /api/tasks?isComplete=true`
+- **MAUI app** — login, list tasks, add tasks, mark complete
 - 14 unit tests (repository, controller, auth)
 
 ## Getting started
@@ -79,15 +81,21 @@ Then F5 → Register → Login again.
 | PUT | `/api/tasks/{id}` | Update a task |
 | DELETE | `/api/tasks/{id}` | Delete a task |
 
+## Run the MAUI app (Windows)
+
+**You need both projects running:**
+
+1. Set **TaskApi** as startup → F5 (API on `http://localhost:5046`)
+2. Right-click **TaskApp** → **Set as Startup Project** → F5
+3. Login with `demo` / `Password123` (register first if fresh database)
+
+The MAUI app uses HTTP (not HTTPS) to avoid local certificate issues during development.
+
 ## Project structure
 
 ```
-TaskApi/
-  Controllers/     AuthController, TasksController
-  Services/        AuthService (JWT + passwords)
-  Repositories/    TaskRepository (data access)
-  Data/            AppDbContext (EF Core)
-  Models/          TaskItem, User, request DTOs
+TaskApi/           ASP.NET Core Web API backend
+TaskApp/           .NET MAUI mobile client
 TaskApi.Tests/     xUnit tests
 ```
 
