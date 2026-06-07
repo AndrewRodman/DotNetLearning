@@ -6,10 +6,17 @@ namespace TaskApi.Repositories;
 
 public class TaskRepository(AppDbContext db) : ITaskRepository
 {
-    public async Task<IReadOnlyList<TaskItem>> GetAllAsync()
+    public async Task<IReadOnlyList<TaskItem>> GetAllAsync(bool? isComplete = null)
     {
-        return await db.Tasks
-            .OrderByDescending(t => t.CreatedAt)
+        var query = db.Tasks.AsQueryable();
+
+        if (isComplete is not null)
+        {
+            query = query.Where(t => t.IsComplete == isComplete);
+        }
+
+        return await query
+            .OrderBy(t => t.Title)
             .ToListAsync();
     }
 

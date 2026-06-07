@@ -1,31 +1,89 @@
 @TaskApi_HostAddress = https://localhost:7154
 
-### Get all tasks
-GET {{TaskApi_HostAddress}}/api/tasks
-Accept: application/json
+###############################################
+# STEP 1: Register — RUN THIS FIRST (before Login)
+# Success = JSON with "token". If 409, user exists: try Login.
+# Password must be at least 6 characters.
+###############################################
 
-### Get task by id
-GET {{TaskApi_HostAddress}}/api/tasks/1
-Accept: application/json
-
-### Create a task
-POST {{TaskApi_HostAddress}}/api/tasks
+POST {{TaskApi_HostAddress}}/api/auth/register
 Content-Type: application/json
 
 {
-  "title": "New test title",
-  "description": "Build a Web API with EF Core"
+  "username": "demo",
+  "password": "Password123"
 }
 
-### Update a task
-PUT {{TaskApi_HostAddress}}/api/tasks/1
+###
+
+###############################################
+# STEP 2: Login — RUN THIS before any task request
+# After it succeeds, run step 3 below
+###############################################
+
+# @name login
+POST {{TaskApi_HostAddress}}/api/auth/login
 Content-Type: application/json
 
 {
-  "title": "Learn ASP.NET Core",
-  "description": "Build a Web API with EF Core",
+  "username": "demo",
+  "password": "Password123"
+}
+
+###
+
+###############################################
+# STEP 3: Tasks (uses token from Login above)
+###############################################
+
+GET {{TaskApi_HostAddress}}/api/tasks
+Authorization: Bearer {{login.response.body.$.token}}
+Accept: application/json
+
+###
+
+GET {{TaskApi_HostAddress}}/api/tasks?isComplete=true
+Authorization: Bearer {{login.response.body.$.token}}
+Accept: application/json
+
+###
+
+GET {{TaskApi_HostAddress}}/api/tasks?isComplete=false
+Authorization: Bearer {{login.response.body.$.token}}
+Accept: application/json
+
+###
+
+GET {{TaskApi_HostAddress}}/api/tasks/1
+Authorization: Bearer {{login.response.body.$.token}}
+Accept: application/json
+
+###
+
+POST {{TaskApi_HostAddress}}/api/tasks
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "title": "Learn JWT auth",
+  "description": "Stage 3 auth complete"
+}
+
+###
+
+PUT {{TaskApi_HostAddress}}/api/tasks/1
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "title": "Learn JWT auth",
+  "description": "Stage 3 auth complete",
   "isComplete": true
 }
 
-### Delete a task
+###
+
 DELETE {{TaskApi_HostAddress}}/api/tasks/1
+Authorization: Bearer {{login.response.body.$.token}}
+
+###

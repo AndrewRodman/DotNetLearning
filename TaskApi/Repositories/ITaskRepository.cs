@@ -4,7 +4,7 @@ namespace TaskApi.Repositories;
 
 public interface ITaskRepository
 {
-    Task<IReadOnlyList<TaskItem>> GetAllAsync();
+    Task<IReadOnlyList<TaskItem>> GetAllAsync(bool? isComplete = null);
     Task<TaskItem?> GetByIdAsync(int id);
     Task<TaskItem> AddAsync(TaskItem task);
     Task<TaskItem?> UpdateAsync(int id, UpdateTaskRequest request);

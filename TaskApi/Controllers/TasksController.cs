@@ -1,17 +1,19 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskApi.Models;
 using TaskApi.Repositories;
 
 namespace TaskApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TasksController(ITaskRepository repository) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<TaskItem>>> GetAll()
+    public async Task<ActionResult<IReadOnlyList<TaskItem>>> GetAll([FromQuery] bool? isComplete)
     {
-        var tasks = await repository.GetAllAsync();
+        var tasks = await repository.GetAllAsync(isComplete);
         return Ok(tasks);
     }
 
