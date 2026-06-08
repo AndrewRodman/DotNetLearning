@@ -15,13 +15,11 @@
                TextColor="Gray" />
 
         <Entry x:Name="UsernameEntry"
-               Placeholder="Username"
-               Text="demo" />
+               Placeholder="Username" />
 
         <Entry x:Name="PasswordEntry"
                Placeholder="Password"
-               IsPassword="True"
-               Text="Password123" />
+               IsPassword="True" />
 
         <Label x:Name="ErrorLabel"
                TextColor="Red"
@@ -33,11 +31,6 @@
         <Button Text="Register"
                 Clicked="OnRegisterClicked"
                 BackgroundColor="Gray" />
-
-        <Label Text="Start TaskApi first (F5 on TaskApi project)"
-               FontSize="12"
-               TextColor="Gray"
-               HorizontalOptions="Center" />
     </VerticalStackLayout>
 
 </ContentPage>

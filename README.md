@@ -1,17 +1,27 @@
-# DotNetLearning — Task API
+# DotNetLearning — Full-Stack Task Manager
 
-ASP.NET Core Web API portfolio project: task management with EF Core, JWT authentication, repository pattern, and xUnit tests.
+Portfolio project: ASP.NET Core Web API, .NET MAUI client, SQL Server, JWT auth, and Azure deployment.
 
 Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to modern .NET.
 
+## Live demo
+
+![TaskApp on Windows](docs/taskapp-screenshot.png)
+
+- **API:** https://taskapi-andrew.azurewebsites.net
+- **Try it:** `GET /api/tasks` returns `401 Unauthorized` without a token (expected)
+- **Database:** Azure SQL (free tier)
+
 ## Tech stack
 
-- **.NET 10** / ASP.NET Core Web API
-- **.NET MAUI** mobile client (`TaskApp`)
-- **Entity Framework Core** + SQLite
-- **JWT Bearer** authentication
-- **xUnit**, **Moq**, EF Core InMemory (tests)
-- **Visual Studio** + `.http` file for API testing
+| Layer | Technology |
+|-------|------------|
+| API | ASP.NET Core Web API (.NET 10) |
+| Client | .NET MAUI (`TaskApp`) |
+| Data | EF Core, SQL Server (LocalDB dev / Azure SQL prod) |
+| Auth | JWT Bearer |
+| Cloud | Azure App Service (Free F1) + Azure SQL |
+| Tests | xUnit, Moq, `WebApplicationFactory` integration tests |
 
 ## Features
 
@@ -19,8 +29,9 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - JWT-protected task endpoints
 - Full CRUD on tasks
 - Optional filter: `GET /api/tasks?isComplete=true`
-- **MAUI app** — login, list tasks, add tasks, mark complete
-- 14 unit tests (repository, controller, auth)
+- MAUI app — login, list tasks, add tasks, mark complete
+- EF Core migrations (SQLite → SQL Server)
+- **17 tests** — 14 unit + 3 integration (auth pipeline, create, delete)
 
 ## Getting started
 
@@ -28,38 +39,37 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 
 - [.NET SDK 10](https://dotnet.microsoft.com/download) or later
 - [Visual Studio 2022+](https://visualstudio.microsoft.com/) (recommended)
+- SQL Server LocalDB (ships with Visual Studio) for local API development
 
-### Run the API
+### Clone and test
 
 ```powershell
 git clone https://github.com/AndrewRodman/DotNetLearning.git
 cd DotNetLearning
-dotnet run --project TaskApi
-```
-
-Or open `DotNetLearning.slnx` in Visual Studio, set **TaskApi** as startup project, press **F5**.
-
-### Run tests
-
-```powershell
 dotnet test
 ```
 
-### Try the API (Visual Studio)
+### Run locally (API + MAUI)
 
-1. Run **TaskApi** (F5)
-2. Open `TaskApi/TaskApi.http`
-3. Run **Register** (step 1) — once per fresh database
-4. Run **Login** (step 2)
-5. Run task requests (step 3) — token is picked up from the login response
+**1. API** — set **TaskApi** as startup, press **Ctrl+F5**
 
-If login fails after schema changes, reset the local database:
+Uses LocalDB via `appsettings.Development.json`. Test with `TaskApi/TaskApi.http`:
+
+1. **Register** → **Login** → task requests
+
+Reset local database after schema changes:
 
 ```powershell
 .\reset-db.ps1
 ```
 
-Then F5 → Register → Login again.
+**2. MAUI** — `TaskApp/Configuration/ApiSettings.cs` points at the live Azure API by default.
+
+To run fully local instead, change `BaseUrl` to `http://localhost:5046/` and start TaskApi first, then F5 **TaskApp**.
+
+### Deployed API (no local API needed)
+
+The MAUI app can talk to Azure directly. F5 **TaskApp**, register a user, create tasks.
 
 ## API endpoints
 
@@ -81,38 +91,30 @@ Then F5 → Register → Login again.
 | PUT | `/api/tasks/{id}` | Update a task |
 | DELETE | `/api/tasks/{id}` | Delete a task |
 
-## Run the MAUI app (Windows)
-
-**You need both projects running:**
-
-1. Set **TaskApi** as startup → F5 (API on `http://localhost:5046`)
-2. Right-click **TaskApp** → **Set as Startup Project** → F5
-3. Login with `demo` / `Password123` (register first if fresh database)
-
-The MAUI app uses HTTP (not HTTPS) to avoid local certificate issues during development.
-
 ## Project structure
 
 ```
-TaskApi/           ASP.NET Core Web API backend
-TaskApp/           .NET MAUI mobile client
-TaskApi.Tests/     xUnit tests
+TaskApi/              ASP.NET Core Web API
+TaskApp/              .NET MAUI client
+TaskApi.Tests/        Unit + integration tests
 ```
 
 ## Architecture
 
 ```
-HTTP Request
-  → Middleware (Authentication / Authorization)
-  → Controller
-  → Repository
-  → EF Core DbContext
-  → SQLite (tasks.db, created locally)
+MAUI / HTTP client
+  → ASP.NET Core API (Azure App Service)
+    → JWT middleware
+    → Controller
+    → Repository
+    → EF Core DbContext
+    → SQL Server (Azure SQL or LocalDB)
 ```
 
 ## Configuration
 
-JWT settings are in `TaskApi/appsettings.json` under `"Jwt"`. The included key is for **local development only**. In production, use environment variables or user secrets — never commit real secrets.
+- **Local:** connection string in `appsettings.Development.json`, JWT in `appsettings.json`
+- **Azure:** connection string and JWT in App Service environment variables (not in source control)
 
 ## License
 
