@@ -83,4 +83,27 @@ public partial class TasksPage : ContentPage
             StatusLabel.IsVisible = true;
         }
     }
+
+    private async void OnDeleteTaskClicked(object? sender, EventArgs e)
+    {
+        if (sender is not Button btn || btn.BindingContext is not TaskItem task)
+        {
+            return;
+        }
+
+        var confirmed = await DisplayAlertAsync("Delete task?", task.Title, "Delete", "Cancel");
+
+        if (confirmed) 
+        {
+            var deleted = await _api.DeleteTaskAsync(task.Id);
+            if (!deleted)
+            {
+                StatusLabel.Text = "Could not delete task.";
+                StatusLabel.IsVisible = true;
+                return;
+            }
+
+            await LoadTasksAsync();
+        }
+    }
 }

@@ -9,4 +9,5 @@ public interface ITaskApiService
     Task<IReadOnlyList<TaskItem>> GetTasksAsync();
     Task<TaskItem?> CreateTaskAsync(string title, string? description);
     Task<TaskItem?> UpdateTaskAsync(TaskItem task);
+    Task<bool> DeleteTaskAsync(int id);
 }

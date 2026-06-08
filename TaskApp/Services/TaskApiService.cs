@@ -100,7 +100,19 @@ public class TaskApiService(HttpClient httpClient, SessionContext session) : ITa
 
         return await response.Content.ReadFromJsonAsync<TaskItem>(JsonOptions);
     }
+    public async Task<bool> DeleteTaskAsync(int id)
+    {
+        EnsureAuthHeader();
 
+        var response = await httpClient.DeleteAsync($"api/tasks/{id}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return false;
+        }
+
+        return true;
+    }
     private void EnsureAuthHeader()
     {
         if (!string.IsNullOrWhiteSpace(session.Token))
