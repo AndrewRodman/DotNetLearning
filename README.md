@@ -1,7 +1,7 @@
 # DotNetLearning — Full-Stack Task Manager
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Tests](https://img.shields.io/badge/tests-17%20passing-success)](https://github.com/AndrewRodman/DotNetLearning#features)
+[![Tests](https://img.shields.io/badge/tests-18%20passing-success)](https://github.com/AndrewRodman/DotNetLearning#features)
 [![Live API](https://img.shields.io/badge/API-live-0078D4?logo=microsoft-azure&logoColor=white)](https://taskapi-andrew.azurewebsites.net)
 
 Portfolio project: ASP.NET Core Web API, .NET MAUI client, SQL Server, JWT auth, and Azure deployment.
@@ -13,7 +13,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 ![TaskApp on Windows](docs/taskapp-screenshot.png)
 
 - **API:** https://taskapi-andrew.azurewebsites.net
-- **Try it:** `GET /api/tasks` returns `401 Unauthorized` without a token (expected)
+- **Try it:** `GET /health` returns `200 OK` (no auth). `GET /api/tasks` returns `401 Unauthorized` without a token (expected)
 - **Database:** Azure SQL (free tier)
 
 ## Tech stack
@@ -30,12 +30,13 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 ## Features
 
 - User registration and login (password hashing)
+- Health check endpoint (`GET /health`, includes database check)
 - JWT-protected task endpoints
 - Full CRUD on tasks
 - Optional filter: `GET /api/tasks?isComplete=true`
 - MAUI app — login, list tasks, add tasks, mark complete, delete tasks
 - EF Core migrations (SQLite → SQL Server)
-- **17 tests** — 14 unit + 3 integration (auth pipeline, create, delete)
+- **18 tests** — 14 unit + 4 integration (health, auth pipeline, create, delete)
 
 ## Getting started
 
@@ -76,6 +77,12 @@ To run fully local instead, change `BaseUrl` to `http://localhost:5046/` and sta
 The MAUI app can talk to Azure directly. F5 **TaskApp**, register a user, create tasks.
 
 ## API endpoints
+
+### Health (public)
+
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/health` | API and database health check |
 
 ### Auth (public)
 

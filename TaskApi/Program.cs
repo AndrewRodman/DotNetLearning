@@ -58,6 +58,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<AppDbContext>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -81,6 +84,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHealthChecks("/health");
 app.MapControllers();
 
 app.Run();

@@ -10,6 +10,16 @@ public class TasksApiIntegrationTests(TaskApiWebApplicationFactory factory) : IC
     private readonly HttpClient _client = factory.CreateClient();
 
     [Fact]
+    public async Task Health_ReturnsHealthy()
+    {
+        var response = await _client.GetAsync("/health");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Equal("Healthy", body);
+    }
+
+    [Fact]
     public async Task GetTasks_WithoutToken_ReturnsUnauthorized()
     {
         var response = await _client.GetAsync("/api/tasks");
