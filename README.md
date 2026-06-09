@@ -1,5 +1,9 @@
 # DotNetLearning — Full-Stack Task Manager
 
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Tests](https://img.shields.io/badge/tests-17%20passing-success)](https://github.com/AndrewRodman/DotNetLearning#features)
+[![Live API](https://img.shields.io/badge/API-live-0078D4?logo=microsoft-azure&logoColor=white)](https://taskapi-andrew.azurewebsites.net)
+
 Portfolio project: ASP.NET Core Web API, .NET MAUI client, SQL Server, JWT auth, and Azure deployment.
 
 Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to modern .NET.
@@ -29,7 +33,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - JWT-protected task endpoints
 - Full CRUD on tasks
 - Optional filter: `GET /api/tasks?isComplete=true`
-- MAUI app — login, list tasks, add tasks, mark complete
+- MAUI app — login, list tasks, add tasks, mark complete, delete tasks
 - EF Core migrations (SQLite → SQL Server)
 - **17 tests** — 14 unit + 3 integration (auth pipeline, create, delete)
 
