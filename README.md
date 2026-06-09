@@ -1,7 +1,7 @@
 # DotNetLearning — Full-Stack Task Manager
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Tests](https://img.shields.io/badge/tests-18%20passing-success)](https://github.com/AndrewRodman/DotNetLearning#features)
+[![CI](https://github.com/AndrewRodman/DotNetLearning/actions/workflows/ci.yml/badge.svg)](https://github.com/AndrewRodman/DotNetLearning/actions/workflows/ci.yml)
 [![Live API](https://img.shields.io/badge/API-live-0078D4?logo=microsoft-azure&logoColor=white)](https://taskapi-andrew.azurewebsites.net)
 
 Portfolio project: ASP.NET Core Web API, .NET MAUI client, SQL Server, JWT auth, and Azure deployment.
