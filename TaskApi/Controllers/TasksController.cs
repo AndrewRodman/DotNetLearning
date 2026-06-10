@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskApi.Models;
@@ -13,14 +14,26 @@ public class TasksController(ITaskRepository repository) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<TaskItem>>> GetAll([FromQuery] bool? isComplete)
     {
-        var tasks = await repository.GetAllAsync(isComplete);
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var tasks = await repository.GetAllAsync(userId.Value, isComplete);
         return Ok(tasks);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<TaskItem>> GetById(int id)
     {
-        var task = await repository.GetByIdAsync(id);
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var task = await repository.GetByIdAsync(userId.Value, id);
         if (task is null)
         {
             return NotFound();
@@ -32,8 +45,15 @@ public class TasksController(ITaskRepository repository) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TaskItem>> Create(CreateTaskRequest request)
     {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
         var task = new TaskItem
         {
+            UserId = userId.Value,
             Title = request.Title,
             Description = request.Description
         };
@@ -45,7 +65,13 @@ public class TasksController(ITaskRepository repository) : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<ActionResult<TaskItem>> Update(int id, UpdateTaskRequest request)
     {
-        var updated = await repository.UpdateAsync(id, request);
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var updated = await repository.UpdateAsync(userId.Value, id, request);
         if (updated is null)
         {
             return NotFound();
@@ -57,12 +83,24 @@ public class TasksController(ITaskRepository repository) : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var deleted = await repository.DeleteAsync(id);
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var deleted = await repository.DeleteAsync(userId.Value, id);
         if (!deleted)
         {
             return NotFound();
         }
 
         return NoContent();
+    }
+
+    private int? GetUserId()
+    {
+        var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return int.TryParse(idClaim, out var userId) ? userId : null;
     }
 }

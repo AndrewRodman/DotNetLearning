@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using TaskApi.Controllers;
@@ -8,13 +10,30 @@ namespace TaskApi.Tests;
 
 public class TasksControllerTests
 {
+    private static TasksController CreateController(ITaskRepository repository, int userId = 1)
+    {
+        var controller = new TasksController(repository);
+        var identity = new ClaimsIdentity(
+        [
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString())
+        ], authenticationType: "Test");
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(identity)
+            }
+        };
+        return controller;
+    }
+
     [Fact]
     public async Task GetById_ReturnsNotFound_WhenTaskMissing()
     {
         var repository = new Mock<ITaskRepository>();
-        repository.Setup(r => r.GetByIdAsync(42)).ReturnsAsync((TaskItem?)null);
+        repository.Setup(r => r.GetByIdAsync(1, 42)).ReturnsAsync((TaskItem?)null);
 
-        var controller = new TasksController(repository.Object);
+        var controller = CreateController(repository.Object);
 
         var result = await controller.GetById(42);
 
@@ -22,7 +41,7 @@ public class TasksControllerTests
     }
 
     [Fact]
-    public async Task Create_ReturnsCreatedAtAction()
+    public async Task Create_ReturnsCreatedAtAction_AndSetsUserId()
     {
         var repository = new Mock<ITaskRepository>();
         repository.Setup(r => r.AddAsync(It.IsAny<TaskItem>()))
@@ -32,7 +51,7 @@ public class TasksControllerTests
                 return task;
             });
 
-        var controller = new TasksController(repository.Object);
+        var controller = CreateController(repository.Object, userId: 5);
 
         var result = await controller.Create(new CreateTaskRequest
         {
@@ -43,6 +62,7 @@ public class TasksControllerTests
         var created = Assert.IsType<CreatedAtActionResult>(result.Result);
         var task = Assert.IsType<TaskItem>(created.Value);
         Assert.Equal(7, task.Id);
+        Assert.Equal(5, task.UserId);
         Assert.Equal("New task", task.Title);
     }
 
@@ -50,9 +70,9 @@ public class TasksControllerTests
     public async Task Delete_ReturnsNoContent_WhenTaskDeleted()
     {
         var repository = new Mock<ITaskRepository>();
-        repository.Setup(r => r.DeleteAsync(1)).ReturnsAsync(true);
+        repository.Setup(r => r.DeleteAsync(1, 1)).ReturnsAsync(true);
 
-        var controller = new TasksController(repository.Object);
+        var controller = CreateController(repository.Object);
 
         var result = await controller.Delete(1);
 
@@ -63,9 +83,9 @@ public class TasksControllerTests
     public async Task Delete_ReturnsNotFound_WhenTaskMissing()
     {
         var repository = new Mock<ITaskRepository>();
-        repository.Setup(r => r.DeleteAsync(999)).ReturnsAsync(false);
+        repository.Setup(r => r.DeleteAsync(1, 999)).ReturnsAsync(false);
 
-        var controller = new TasksController(repository.Object);
+        var controller = CreateController(repository.Object);
 
         var result = await controller.Delete(999);
 

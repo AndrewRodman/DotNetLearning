@@ -6,9 +6,9 @@ namespace TaskApi.Repositories;
 
 public class TaskRepository(AppDbContext db) : ITaskRepository
 {
-    public async Task<IReadOnlyList<TaskItem>> GetAllAsync(bool? isComplete = null)
+    public async Task<IReadOnlyList<TaskItem>> GetAllAsync(int userId, bool? isComplete = null)
     {
-        var query = db.Tasks.AsQueryable();
+        var query = db.Tasks.Where(t => t.UserId == userId);
 
         if (isComplete is not null)
         {
@@ -20,9 +20,9 @@ public class TaskRepository(AppDbContext db) : ITaskRepository
             .ToListAsync();
     }
 
-    public async Task<TaskItem?> GetByIdAsync(int id)
+    public async Task<TaskItem?> GetByIdAsync(int userId, int id)
     {
-        return await db.Tasks.FindAsync(id);
+        return await db.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
     }
 
     public async Task<TaskItem> AddAsync(TaskItem task)
@@ -32,9 +32,9 @@ public class TaskRepository(AppDbContext db) : ITaskRepository
         return task;
     }
 
-    public async Task<TaskItem?> UpdateAsync(int id, UpdateTaskRequest request)
+    public async Task<TaskItem?> UpdateAsync(int userId, int id, UpdateTaskRequest request)
     {
-        var task = await db.Tasks.FindAsync(id);
+        var task = await GetByIdAsync(userId, id);
         if (task is null)
         {
             return null;
@@ -48,9 +48,9 @@ public class TaskRepository(AppDbContext db) : ITaskRepository
         return task;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int userId, int id)
     {
-        var task = await db.Tasks.FindAsync(id);
+        var task = await GetByIdAsync(userId, id);
         if (task is null)
         {
             return false;

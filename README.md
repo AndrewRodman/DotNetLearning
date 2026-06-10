@@ -33,11 +33,12 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - User registration and login (password hashing)
 - Health check endpoint (`GET /health`, includes database check)
 - JWT-protected task endpoints
+- Per-user task isolation (users only see and modify their own tasks)
 - Full CRUD on tasks
 - Optional filter: `GET /api/tasks?isComplete=true|false`
 - MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, mark complete, delete tasks (with confirm)
 - EF Core migrations (SQLite → SQL Server)
-- **18 tests** — 14 unit + 4 integration (health, auth pipeline, create, delete)
+- **22 tests** — 17 unit + 5 integration (health, auth, per-user isolation, create, delete)
 
 ## Getting started
 

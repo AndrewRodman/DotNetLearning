@@ -110,6 +110,52 @@ public class TasksApiIntegrationTests(TaskApiWebApplicationFactory factory) : IC
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
         var tasks = await _client.GetFromJsonAsync<List<TaskItem>>("/api/tasks");
+        Assert.NotNull(tasks);
         Assert.DoesNotContain(tasks, t => t.Id == created.Id);
+    }
+
+    [Fact]
+    public async Task Users_OnlySeeTheirOwnTasks()
+    {
+        var userA = $"user_a_{Guid.NewGuid():N}";
+        var userB = $"user_b_{Guid.NewGuid():N}";
+        const string password = "Password123";
+
+        async Task<string> RegisterAndLoginAsync(string username)
+        {
+            await _client.PostAsJsonAsync("/api/auth/register", new LoginRequest
+            {
+                Username = username,
+                Password = password
+            });
+
+            var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequest
+            {
+                Username = username,
+                Password = password
+            });
+            loginResponse.EnsureSuccessStatusCode();
+
+            var auth = await loginResponse.Content.ReadFromJsonAsync<AuthResponse>();
+            Assert.NotNull(auth);
+            return auth.Token;
+        }
+
+        var tokenA = await RegisterAndLoginAsync(userA);
+        var tokenB = await RegisterAndLoginAsync(userB);
+
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenA);
+        var createResponse = await _client.PostAsJsonAsync("/api/tasks", new CreateTaskRequest
+        {
+            Title = "User A private task",
+            Description = "Should not leak"
+        });
+        createResponse.EnsureSuccessStatusCode();
+
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenB);
+        var userBTasks = await _client.GetFromJsonAsync<List<TaskItem>>("/api/tasks");
+
+        Assert.NotNull(userBTasks);
+        Assert.DoesNotContain(userBTasks, t => t.Title == "User A private task");
     }
 }
