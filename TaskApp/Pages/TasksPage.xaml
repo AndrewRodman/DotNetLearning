@@ -9,6 +9,13 @@
         <HorizontalStackLayout Grid.Row="0" Spacing="8">
             <Button Text="Refresh" Clicked="OnRefreshClicked" />
             <Button Text="Logout" Clicked="OnLogoutClicked" BackgroundColor="Gray" />
+            <Picker Title="Filter" x:Name="FilterPicker" SelectedIndexChanged="FilterPickerSelectedIndexChanged" SelectedIndex="0">
+                <Picker.Items>
+                    <x:String>All</x:String>
+                    <x:String>Open</x:String>
+                    <x:String>Complete</x:String>
+                </Picker.Items>
+            </Picker>
         </HorizontalStackLayout>
 
         <CollectionView x:Name="TasksCollection"
@@ -18,7 +25,7 @@
                 <DataTemplate x:DataType="models:TaskItem">
                     <VerticalStackLayout Padding="8" Spacing="4">
                         <HorizontalStackLayout Spacing="8">
-                            <CheckBox IsChecked="{Binding IsComplete}"
+                            <CheckBox IsChecked="{Binding IsComplete, Mode=OneWay}"
                                       CheckedChanged="OnTaskCompleteChanged" />
                             <Label Text="{Binding Title}"
                                    FontAttributes="Bold"

@@ -1,5 +1,5 @@
-@TaskApi_HostAddress = https://taskapi-andrew.azurewebsites.net
-//@TaskApi_HostAddress = http://localhost:5046
+//@TaskApi_HostAddress = https://taskapi-andrew.azurewebsites.net
+@TaskApi_HostAddress = http://localhost:5046
 
 
 ###############################################

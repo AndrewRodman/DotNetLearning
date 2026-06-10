@@ -25,6 +25,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 | Data | EF Core, SQL Server (LocalDB dev / Azure SQL prod) |
 | Auth | JWT Bearer |
 | Cloud | Azure App Service (Free F1) + Azure SQL |
+| CI | GitHub Actions (`dotnet test` on push) |
 | Tests | xUnit, Moq, `WebApplicationFactory` integration tests |
 
 ## Features
@@ -33,8 +34,8 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - Health check endpoint (`GET /health`, includes database check)
 - JWT-protected task endpoints
 - Full CRUD on tasks
-- Optional filter: `GET /api/tasks?isComplete=true`
-- MAUI app — login, list tasks, add tasks, mark complete, delete tasks
+- Optional filter: `GET /api/tasks?isComplete=true|false`
+- MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, mark complete, delete tasks (with confirm)
 - EF Core migrations (SQLite → SQL Server)
 - **18 tests** — 14 unit + 4 integration (health, auth pipeline, create, delete)
 
@@ -51,7 +52,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 ```powershell
 git clone https://github.com/AndrewRodman/DotNetLearning.git
 cd DotNetLearning
-dotnet test
+dotnet test TaskApi.Tests
 ```
 
 ### Run locally (API + MAUI)
@@ -68,13 +69,13 @@ Reset local database after schema changes:
 .\reset-db.ps1
 ```
 
-**2. MAUI** — `TaskApp/Configuration/ApiSettings.cs` points at the live Azure API by default.
+**2. MAUI** — F5 **TaskApp** (start TaskApi first for local dev).
 
-To run fully local instead, change `BaseUrl` to `http://localhost:5046/` and start TaskApi first, then F5 **TaskApp**.
+`TaskApp/Configuration/ApiSettings.cs` uses `#if DEBUG`: **Debug** builds call `http://localhost:5046/`; **Release** builds call the live Azure API.
 
 ### Deployed API (no local API needed)
 
-The MAUI app can talk to Azure directly. F5 **TaskApp**, register a user, create tasks.
+Build **TaskApp** in Release (or run against Azure in Debug by changing `BaseUrl`). Register a user and create tasks — no local API required.
 
 ## API endpoints
 
@@ -96,7 +97,8 @@ The MAUI app can talk to Azure directly. F5 **TaskApp**, register a user, create
 | Method | URL | Description |
 |--------|-----|-------------|
 | GET | `/api/tasks` | List all tasks |
-| GET | `/api/tasks?isComplete=true` | Filter by completion |
+| GET | `/api/tasks?isComplete=true` | Completed tasks only |
+| GET | `/api/tasks?isComplete=false` | Open tasks only |
 | GET | `/api/tasks/{id}` | Get one task |
 | POST | `/api/tasks` | Create a task |
 | PUT | `/api/tasks/{id}` | Update a task |
@@ -108,6 +110,7 @@ The MAUI app can talk to Azure directly. F5 **TaskApp**, register a user, create
 TaskApi/              ASP.NET Core Web API
 TaskApp/              .NET MAUI client
 TaskApi.Tests/        Unit + integration tests
+.github/workflows/    CI pipeline
 ```
 
 ## Architecture

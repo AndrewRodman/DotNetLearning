@@ -59,11 +59,20 @@ public class TaskApiService(HttpClient httpClient, SessionContext session) : ITa
         return auth;
     }
 
-    public async Task<IReadOnlyList<TaskItem>> GetTasksAsync()
+    public async Task<IReadOnlyList<TaskItem>> GetTasksAsync(bool? isComplete = null)
     {
         EnsureAuthHeader();
-        var tasks = await httpClient.GetFromJsonAsync<List<TaskItem>>("api/tasks", JsonOptions);
-        return tasks ?? [];
+        
+        if (isComplete == null)
+        {
+            var tasks = await httpClient.GetFromJsonAsync<List<TaskItem>>("api/tasks", JsonOptions);
+            return tasks ?? [];
+        }
+        else
+        {
+            var tasks = await httpClient.GetFromJsonAsync<List<TaskItem>>($"api/tasks?isComplete={isComplete}", JsonOptions);
+            return tasks ?? [];
+        }     
     }
 
     public async Task<TaskItem?> CreateTaskAsync(string title, string? description)

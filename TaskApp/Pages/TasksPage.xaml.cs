@@ -8,12 +8,15 @@ public partial class TasksPage : ContentPage
     private readonly ITaskApiService _api;
     private readonly SessionContext _session;
     private List<TaskItem> _tasks = [];
+    private bool? _filter =null;
+    private bool _isReloading;
 
     public TasksPage(ITaskApiService api, SessionContext session)
     {
         InitializeComponent();
         _api = api;
         _session = session;
+        FilterPicker.SelectedIndex = 0; 
     }
 
     protected override async void OnAppearing()
@@ -53,13 +56,25 @@ public partial class TasksPage : ContentPage
 
     private async void OnTaskCompleteChanged(object? sender, CheckedChangedEventArgs e)
     {
+        if (_isReloading) return;
+
         if (sender is not CheckBox checkBox || checkBox.BindingContext is not TaskItem task)
         {
             return;
         }
 
         task.IsComplete = e.Value;
-        await _api.UpdateTaskAsync(task);
+        var updated = await _api.UpdateTaskAsync(task);
+        if (updated is null)
+        {
+            StatusLabel.Text = "Could not update task.";
+            StatusLabel.IsVisible = true;
+            await LoadTasksAsync();
+            return;
+        }
+
+        if (_filter is not null && task.IsComplete != _filter)
+            await LoadTasksAsync();
     }
 
     private async void OnLogoutClicked(object? sender, EventArgs e)
@@ -70,9 +85,10 @@ public partial class TasksPage : ContentPage
 
     private async Task LoadTasksAsync()
     {
+        _isReloading = true;
         try
         {
-            _tasks = (await _api.GetTasksAsync()).ToList();
+            _tasks = (await _api.GetTasksAsync(_filter)).ToList();
             TasksCollection.ItemsSource = null;
             TasksCollection.ItemsSource = _tasks;
             StatusLabel.IsVisible = false;
@@ -81,6 +97,10 @@ public partial class TasksPage : ContentPage
         {
             StatusLabel.Text = "Could not load tasks. Is TaskApi running?";
             StatusLabel.IsVisible = true;
+        }
+        finally
+        {
+            _isReloading = false;
         }
     }
 
@@ -105,5 +125,28 @@ public partial class TasksPage : ContentPage
 
             await LoadTasksAsync();
         }
+    }
+
+    private async void FilterPickerSelectedIndexChanged(object sender, EventArgs e)
+    {
+        if(sender is not Picker picker)
+        {  
+            return; 
+        }
+
+        if(picker.SelectedIndex ==0)
+        {
+            _filter = null;
+        }
+        else if(picker.SelectedIndex == 1)
+        {
+            _filter = false;
+        }
+        else if (picker.SelectedIndex == 2)
+        {
+            _filter = true;
+        }
+
+        await LoadTasksAsync();
     }
 }
