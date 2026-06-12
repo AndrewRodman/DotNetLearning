@@ -1,12 +1,11 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using TaskApp.Configuration;
 using TaskApp.Models;
 
 namespace TaskApp.Services;
 
-public class TaskApiService(HttpClient httpClient, SessionContext session) : ITaskApiService
+public class TaskApiService(HttpClient httpClient, ISessionContext session) : ITaskApiService
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {

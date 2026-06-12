@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="TaskApi/TaskApi.csproj" />
   <Project Path="TaskApi.Tests/TaskApi.Tests.csproj" />
+  <Project Path="TaskApp.Core/TaskApp.Core.csproj" />
   <Project Path="TaskApp/TaskApp.csproj" />
+  <Project Path="TaskApp.Tests/TaskApp.Tests.csproj" />
 </Solution>

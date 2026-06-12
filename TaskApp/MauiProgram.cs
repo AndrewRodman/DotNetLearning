@@ -19,6 +19,7 @@ public static class MauiProgram
             });
 
         builder.Services.AddSingleton<SessionContext>();
+        builder.Services.AddSingleton<ISessionContext>(sp => sp.GetRequiredService<SessionContext>());
         builder.Services.AddSingleton<HttpClient>(_ => new HttpClient
         {
             BaseAddress = new Uri(ApiSettings.BaseUrl)

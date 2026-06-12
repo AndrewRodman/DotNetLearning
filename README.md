@@ -26,7 +26,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 | Auth | JWT Bearer |
 | Cloud | Azure App Service (Free F1) + Azure SQL |
 | CI | GitHub Actions (`dotnet test` on push) |
-| Tests | xUnit, Moq, `WebApplicationFactory` integration tests |
+| Tests | xUnit, Moq, `WebApplicationFactory` (API), mocked `HttpClient` (MAUI client) |
 
 ## Features
 
@@ -36,9 +36,9 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - Per-user task isolation (users only see and modify their own tasks)
 - Full CRUD on tasks
 - Optional filter: `GET /api/tasks?isComplete=true|false`
-- MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, mark complete, delete tasks (with confirm)
+- MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, edit tasks, mark complete, delete tasks (with confirm)
 - EF Core migrations (SQLite → SQL Server)
-- **22 tests** — 17 unit + 5 integration (health, auth, per-user isolation, create, delete)
+- **34 tests** — 22 API (17 unit + 5 integration) + 12 MAUI client (`TaskApiService` with mocked HTTP)
 
 ## Getting started
 
@@ -54,6 +54,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 git clone https://github.com/AndrewRodman/DotNetLearning.git
 cd DotNetLearning
 dotnet test TaskApi.Tests
+dotnet test TaskApp.Tests
 ```
 
 ### Run locally (API + MAUI)
@@ -109,15 +110,18 @@ Build **TaskApp** in Release (or run against Azure in Debug by changing `BaseUrl
 
 ```
 TaskApi/              ASP.NET Core Web API
+TaskApp.Core/         Shared MAUI models + API client service
 TaskApp/              .NET MAUI client
-TaskApi.Tests/        Unit + integration tests
+TaskApi.Tests/        API unit + integration tests
+TaskApp.Tests/        MAUI client service tests
 .github/workflows/    CI pipeline
 ```
 
 ## Architecture
 
 ```
-MAUI / HTTP client
+MAUI UI (TaskApp)
+  → TaskApiService (TaskApp.Core)
   → ASP.NET Core API (Azure App Service)
     → JWT middleware
     → Controller

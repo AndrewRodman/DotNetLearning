@@ -1,6 +1,6 @@
 namespace TaskApp.Services;
 
-public class SessionContext
+public class SessionContext : ISessionContext
 {
     private const string TokenKey = "auth_token";
     private const string UsernameKey = "auth_username";

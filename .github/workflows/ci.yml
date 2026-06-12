@@ -21,3 +21,6 @@ jobs:
 
       - name: Test API
         run: dotnet test TaskApi.Tests/TaskApi.Tests.csproj --configuration Release --verbosity normal
+
+      - name: Test MAUI client
+        run: dotnet test TaskApp.Tests/TaskApp.Tests.csproj --configuration Release --verbosity normal
