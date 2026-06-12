@@ -27,6 +27,7 @@ public static class MauiProgram
 
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<TasksPage>();
+        builder.Services.AddTransient<EditTaskPage>();
         builder.Services.AddSingleton<AppShell>();
 
         return builder.Build();

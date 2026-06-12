@@ -104,6 +104,19 @@ public partial class TasksPage : ContentPage
         }
     }
 
+    private async void OnEditTaskClicked(object? sender, EventArgs e)
+    {
+        if (sender is not Button btn || btn.BindingContext is not TaskItem task)
+        {
+            return;
+        }
+
+        await Shell.Current.GoToAsync("editTask", new Dictionary<string, object>
+        {
+            ["TaskToEdit"] = task
+        });
+    }
+
     private async void OnDeleteTaskClicked(object? sender, EventArgs e)
     {
         if (sender is not Button btn || btn.BindingContext is not TaskItem task)

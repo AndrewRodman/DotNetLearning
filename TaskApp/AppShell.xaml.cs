@@ -21,5 +21,7 @@ public partial class AppShell : Shell
             Route = "tasks",
             Content = tasksPage
         });
+
+        Routing.RegisterRoute("editTask", typeof(EditTaskPage));
     }
 }

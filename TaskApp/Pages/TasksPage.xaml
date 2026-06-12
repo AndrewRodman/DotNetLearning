@@ -8,7 +8,9 @@
     <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="12">
         <HorizontalStackLayout Grid.Row="0" Spacing="8">
             <Button Text="Refresh" Clicked="OnRefreshClicked" />
-            <Button Text="Logout" Clicked="OnLogoutClicked" BackgroundColor="Gray" />
+            <Button Text="Logout"
+                    Style="{StaticResource SecondaryActionButton}"
+                    Clicked="OnLogoutClicked" />
             <Picker Title="Filter" x:Name="FilterPicker" SelectedIndexChanged="FilterPickerSelectedIndexChanged" SelectedIndex="0">
                 <Picker.Items>
                     <x:String>All</x:String>
@@ -23,23 +25,32 @@
                         SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:TaskItem">
-                    <VerticalStackLayout Padding="8" Spacing="4">
-                        <HorizontalStackLayout Spacing="8">
-                            <CheckBox IsChecked="{Binding IsComplete, Mode=OneWay}"
-                                      CheckedChanged="OnTaskCompleteChanged" />
-                            <Label Text="{Binding Title}"
-                                   FontAttributes="Bold"
-                                   VerticalOptions="Center" />
-                            <Button Text="Delete"
-                                    TextColor="Red"
-                                    BackgroundColor="Transparent" 
-                                    Clicked="OnDeleteTaskClicked"/>
-                        </HorizontalStackLayout>
-                        <Label Text="{Binding Description}"
-                               TextColor="Gray"
-                               FontSize="12" />
-                        
-                    </VerticalStackLayout>
+                    <Border Style="{StaticResource TaskCard}">
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+                                <CheckBox Grid.Column="0"
+                                          IsChecked="{Binding IsComplete, Mode=OneWay}"
+                                          CheckedChanged="OnTaskCompleteChanged"
+                                          VerticalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Title}"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center"
+                                       LineBreakMode="TailTruncation" />
+                                <Button Grid.Column="2"
+                                        Text="Edit"
+                                        Style="{StaticResource TaskEditButton}"
+                                        Clicked="OnEditTaskClicked" />
+                                <Button Grid.Column="3"
+                                        Text="Delete"
+                                        Style="{StaticResource TaskDeleteButton}"
+                                        Clicked="OnDeleteTaskClicked" />
+                            </Grid>
+                            <Label Text="{Binding Description}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                                   FontSize="12" />
+                        </VerticalStackLayout>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
