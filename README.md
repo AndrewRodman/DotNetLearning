@@ -10,6 +10,10 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 
 ## Live demo
 
+![TaskApp demo](docs/taskapp-demo.gif)
+
+*Static screenshot (Windows):*
+
 ![TaskApp on Windows](docs/taskapp-screenshot.png)
 
 - **API:** https://taskapi-andrew.azurewebsites.net
