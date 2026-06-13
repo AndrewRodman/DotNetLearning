@@ -132,8 +132,13 @@ MAUI UI (TaskApp)
 
 ## Configuration
 
-- **Local:** connection string in `appsettings.Development.json`, JWT in `appsettings.json`
-- **Azure:** connection string and JWT in App Service environment variables (not in source control)
+- **Local dev:** `appsettings.Development.json` — LocalDB connection string + dev JWT key
+- **Tests:** `appsettings.Testing.json` — test JWT key (CI uses this)
+- **Azure prod:** App Service **Configuration** → Application settings (not in source control):
+  - `ConnectionStrings__DefaultConnection` — Azure SQL
+  - `Jwt__Key` — production-only secret (32+ characters; overrides `appsettings.json`)
+
+`appsettings.json` holds shared JWT settings (issuer, audience) but **no key**. Production must set `Jwt__Key` in Azure or the API will fail to start.
 
 ## License
 
