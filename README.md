@@ -152,7 +152,13 @@ MAUI UI (TaskApp)
 
 `appsettings.json` holds shared JWT settings (issuer, audience) but **no key**. Production must set `Jwt__Key` in Azure or the API will fail to start.
 
-Larger teams sometimes store secrets in **Azure Key Vault** instead of typing them in App Service settings (see below). This project uses App Service settings — fine for a portfolio.
+### Secrets: App Service settings vs Azure Key Vault
+
+**This project uses App Service application settings** — you enter `Jwt__Key` and the connection string in the Azure Portal. That is enough for a portfolio or small app.
+
+**Azure Key Vault** is a separate Azure service for storing secrets (keys, passwords, certificates). Teams use it when they need stricter access control, audit logs, or centralized secret rotation. The API would read `Jwt__Key` from the vault at runtime instead of from App Service settings. Same goal (keep secrets out of GitHub); different storage.
+
+Key Vault is **not required** here. App Service settings are the right choice for this project.
 
 ## License
 
