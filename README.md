@@ -36,7 +36,7 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - Per-user task isolation (users only see and modify their own tasks)
 - Full CRUD on tasks with optional due dates
 - Optional filter: `GET /api/tasks?isComplete=true|false`
-- MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, optional due date, edit tasks, mark complete, delete tasks (with confirm)
+- MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, optional due date, edit tasks, mark complete, delete tasks (with confirm), pull-to-refresh on mobile + Refresh button (Windows)
 - EF Core migrations (SQLite → SQL Server)
 - **35 tests** — 23 API (18 unit + 5 integration) + 12 MAUI client (`TaskApiService` with mocked HTTP)
 
@@ -71,13 +71,21 @@ Reset local database after schema changes:
 .\reset-db.ps1
 ```
 
-**2. MAUI** — F5 **TaskApp** (start TaskApi first for local dev).
+**2. MAUI** — F5 **TaskApp** (start TaskApi first for local Debug builds).
 
-`TaskApp/Configuration/ApiSettings.cs` uses `#if DEBUG`: **Debug** builds call `http://localhost:5046/`; **Release** builds call the live Azure API.
+`TaskApp/Configuration/ApiSettings.cs` picks the API URL by build and platform:
+
+| Build | Platform | API URL |
+|-------|----------|---------|
+| Debug | Windows | `http://localhost:5046/` |
+| Debug | Android emulator | `http://10.0.2.2:5046/` (host PC — not `localhost`) |
+| Release | Any | `https://taskapi-andrew.azurewebsites.net/` |
+
+Reload tasks via the **Refresh** button (all platforms) or **pull down** on the task list (mobile; works best on Android/iOS).
 
 ### Deployed API (no local API needed)
 
-Build **TaskApp** in Release (or run against Azure in Debug by changing `BaseUrl`). Register a user and create tasks — no local API required.
+Build **TaskApp** in **Release** to use the live Azure API without running TaskApi locally.
 
 ## API endpoints
 
@@ -139,6 +147,8 @@ MAUI UI (TaskApp)
   - `Jwt__Key` — production-only secret (32+ characters; overrides `appsettings.json`)
 
 `appsettings.json` holds shared JWT settings (issuer, audience) but **no key**. Production must set `Jwt__Key` in Azure or the API will fail to start.
+
+Larger teams sometimes store secrets in **Azure Key Vault** instead of typing them in App Service settings (see below). This project uses App Service settings — fine for a portfolio.
 
 ## License
 
