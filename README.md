@@ -34,11 +34,11 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - Health check endpoint (`GET /health`, includes database check)
 - JWT-protected task endpoints
 - Per-user task isolation (users only see and modify their own tasks)
-- Full CRUD on tasks
+- Full CRUD on tasks with optional due dates
 - Optional filter: `GET /api/tasks?isComplete=true|false`
-- MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, edit tasks, mark complete, delete tasks (with confirm)
+- MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, optional due date, edit tasks, mark complete, delete tasks (with confirm)
 - EF Core migrations (SQLite → SQL Server)
-- **34 tests** — 22 API (17 unit + 5 integration) + 12 MAUI client (`TaskApiService` with mocked HTTP)
+- **35 tests** — 23 API (18 unit + 5 integration) + 12 MAUI client (`TaskApiService` with mocked HTTP)
 
 ## Getting started
 

@@ -44,6 +44,27 @@ public class TaskRepositoryTests
     }
 
     [Fact]
+    public async Task AddAsync_PersistsTaskDueDate()
+    {
+        await using var db = CreateContext();
+        var user = await SeedUserAsync(db, "tester");
+        var repository = new TaskRepository(db);
+
+        var created = await repository.AddAsync(new TaskItem
+        {
+            UserId = user.Id,
+            Title = "Write unit tests",
+            Description = "Stage 3",
+            DueDate= DateTime.UtcNow
+        });
+
+        Assert.True(created.Id > 0);
+        Assert.Equal("Write unit tests", created.Title);
+        Assert.Equal(user.Id, created.UserId);
+        Assert.Equal(created.DueDate?.Date, DateTime.UtcNow.Date);
+    }
+
+    [Fact]
     public async Task GetAllAsync_FiltersByIsComplete()
     {
         await using var db = CreateContext();
@@ -92,12 +113,14 @@ public class TaskRepositoryTests
         {
             Title = "New title",
             Description = "Updated",
-            IsComplete = true
+            IsComplete = true,
+            DueDate = DateTime.UtcNow.Date
         });
 
         Assert.NotNull(updated);
         Assert.Equal("New title", updated.Title);
         Assert.True(updated.IsComplete);
+        Assert.Equal(updated.DueDate?.Date, DateTime.UtcNow.Date);
     }
 
     [Fact]

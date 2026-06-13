@@ -56,7 +56,8 @@ public class TasksApiIntegrationTests(TaskApiWebApplicationFactory factory) : IC
         var createResponse = await _client.PostAsJsonAsync("/api/tasks", new CreateTaskRequest
         {
             Title = "Integration test task",
-            Description = "Full HTTP pipeline"
+            Description = "Full HTTP pipeline",
+            DueDate = DateTime.UtcNow
         });
         createResponse.EnsureSuccessStatusCode();
 

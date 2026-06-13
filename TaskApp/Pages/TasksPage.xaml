@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:models="clr-namespace:TaskApp.Models"
+             xmlns:models="clr-namespace:TaskApp.Models;assembly=TaskApp.Core"
              x:Class="TaskApp.Pages.TasksPage"
              Title="My Tasks">
 
@@ -49,6 +49,18 @@
                             <Label Text="{Binding Description}"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
                                    FontSize="12" />
+                            <Label Text="{Binding DueDate, StringFormat='{0:MM-dd-yyyy}'} "
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}"
+                                   FontSize="12" 
+                                   IsVisible="True">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                                                 Binding="{Binding DueDate}"
+                                                 Value="{x:Null}">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
                         </VerticalStackLayout>
                     </Border>
                 </DataTemplate>
@@ -58,6 +70,11 @@
         <VerticalStackLayout Grid.Row="2" Spacing="8">
             <Entry x:Name="NewTitleEntry" Placeholder="New task title" />
             <Entry x:Name="NewDescriptionEntry" Placeholder="Description (optional)" />
+            <HorizontalStackLayout>
+                <CheckBox x:Name="DueDateCB" IsChecked="False" CheckedChanged="DueDateCB_CheckedChanged"></CheckBox>
+                <Label VerticalTextAlignment="Center" Text="Due Date?"></Label>
+                <DatePicker x:Name="DueDatePicker" IsVisible="False" Margin="10"></DatePicker>
+            </HorizontalStackLayout>
             <Button Text="Add Task" Clicked="OnAddTaskClicked" />
             <Label x:Name="StatusLabel" TextColor="Red" IsVisible="False" />
         </VerticalStackLayout>

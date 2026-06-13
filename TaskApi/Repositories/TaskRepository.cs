@@ -43,6 +43,7 @@ public class TaskRepository(AppDbContext db) : ITaskRepository
         task.Title = request.Title;
         task.Description = request.Description;
         task.IsComplete = request.IsComplete;
+        task.DueDate = request.DueDate;
 
         await db.SaveChangesAsync();
         return task;

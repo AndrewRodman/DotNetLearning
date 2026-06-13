@@ -9,4 +9,5 @@ public class TaskItem
     public string? Description { get; set; }
     public bool IsComplete { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? DueDate { get; set; }
 }

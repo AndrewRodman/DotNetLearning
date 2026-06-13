@@ -41,7 +41,14 @@ public partial class TasksPage : ContentPage
             return;
         }
 
-        var created = await _api.CreateTaskAsync(NewTitleEntry.Text, NewDescriptionEntry.Text);
+        DateTime? dueDate = null;
+
+        if(DueDateCB.IsChecked)
+        {
+            dueDate = DueDatePicker.Date;
+        }
+
+        var created = await _api.CreateTaskAsync(NewTitleEntry.Text, NewDescriptionEntry.Text, dueDate);
         if (created is null)
         {
             StatusLabel.Text = "Could not create task.";
@@ -51,6 +58,7 @@ public partial class TasksPage : ContentPage
 
         NewTitleEntry.Text = string.Empty;
         NewDescriptionEntry.Text = string.Empty;
+        DueDateCB.IsChecked = false;
         await LoadTasksAsync();
     }
 
@@ -140,7 +148,7 @@ public partial class TasksPage : ContentPage
         }
     }
 
-    private async void FilterPickerSelectedIndexChanged(object sender, EventArgs e)
+    private async void FilterPickerSelectedIndexChanged(object? sender, EventArgs e)
     {
         if(sender is not Picker picker)
         {  
@@ -161,5 +169,17 @@ public partial class TasksPage : ContentPage
         }
 
         await LoadTasksAsync();
+    }
+
+    private void DueDateCB_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        if(DueDateCB.IsChecked)
+        {
+            DueDatePicker.IsVisible = true;
+        }
+        else
+        {
+            DueDatePicker.IsVisible = false;
+        }
     }
 }

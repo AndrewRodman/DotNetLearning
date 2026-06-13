@@ -56,7 +56,8 @@ public class TasksControllerTests
         var result = await controller.Create(new CreateTaskRequest
         {
             Title = "New task",
-            Description = "From test"
+            Description = "From test",
+            DueDate= DateTime.UtcNow
         });
 
         var created = Assert.IsType<CreatedAtActionResult>(result.Result);

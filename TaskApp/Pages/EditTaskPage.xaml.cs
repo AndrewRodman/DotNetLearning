@@ -24,10 +24,18 @@ public partial class EditTaskPage : ContentPage, IQueryAttributable
                 Title = task.Title,
                 Description = task.Description,
                 IsComplete = task.IsComplete,
-                CreatedAt = task.CreatedAt
+                CreatedAt = task.CreatedAt,
+                DueDate = task.DueDate
             };
             TitleEntry.Text = _task.Title;
             DescriptionEntry.Text = _task.Description ?? string.Empty;
+
+            // After loading _task, if it has a due date:
+            if (_task.DueDate is not null)
+            {
+                DueDateCB.IsChecked = true;
+                DueDatePicker.Date = _task.DueDate.Value;
+            }
         }
     }
 
@@ -47,6 +55,15 @@ public partial class EditTaskPage : ContentPage, IQueryAttributable
             ? null
             : DescriptionEntry.Text.Trim();
 
+        DateTime? dueDate = null;
+
+        if (DueDateCB.IsChecked)
+        {
+            dueDate = DueDatePicker.Date;
+        }
+
+        _task.DueDate= dueDate;
+
         var updated = await _api.UpdateTaskAsync(_task);
         if (updated is null)
         {
@@ -61,5 +78,17 @@ public partial class EditTaskPage : ContentPage, IQueryAttributable
     private async void OnCancelClicked(object? sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("..");
+    }
+
+    private void DueDateCB_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        if (DueDateCB.IsChecked)
+        {
+            DueDatePicker.IsVisible = true;
+        }
+        else
+        {
+            DueDatePicker.IsVisible = false;
+        }
     }
 }

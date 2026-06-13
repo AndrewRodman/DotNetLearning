@@ -55,7 +55,8 @@ public class TasksController(ITaskRepository repository) : ControllerBase
         {
             UserId = userId.Value,
             Title = request.Title,
-            Description = request.Description
+            Description = request.Description,
+            DueDate = request.DueDate
         };
 
         var created = await repository.AddAsync(task);

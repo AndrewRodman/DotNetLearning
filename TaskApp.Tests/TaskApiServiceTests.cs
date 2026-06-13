@@ -169,7 +169,7 @@ public class TaskApiServiceTests
         session.Save("token", "alice");
         var service = CreateService(handler, session);
 
-        var created = await service.CreateTaskAsync("New task", "Details");
+        var created = await service.CreateTaskAsync("New task", "Details", DateTime.UtcNow);
 
         Assert.NotNull(created);
         Assert.Equal(9, created.Id);
@@ -186,7 +186,7 @@ public class TaskApiServiceTests
         session.Save("token", "alice");
         var service = CreateService(handler, session);
 
-        var created = await service.CreateTaskAsync("", null);
+        var created = await service.CreateTaskAsync("", null, null);
 
         Assert.Null(created);
     }

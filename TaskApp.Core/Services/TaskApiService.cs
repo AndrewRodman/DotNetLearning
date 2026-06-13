@@ -74,13 +74,14 @@ public class TaskApiService(HttpClient httpClient, ISessionContext session) : IT
         }     
     }
 
-    public async Task<TaskItem?> CreateTaskAsync(string title, string? description)
+    public async Task<TaskItem?> CreateTaskAsync(string title, string? description, DateTime? dueDate)
     {
         EnsureAuthHeader();
         var response = await httpClient.PostAsJsonAsync("api/tasks", new CreateTaskRequest
         {
             Title = title,
-            Description = description
+            Description = description,
+            DueDate = dueDate
         });
 
         if (!response.IsSuccessStatusCode)
@@ -98,7 +99,8 @@ public class TaskApiService(HttpClient httpClient, ISessionContext session) : IT
         {
             Title = task.Title,
             Description = task.Description,
-            IsComplete = task.IsComplete
+            IsComplete = task.IsComplete,
+            DueDate=task.DueDate
         });
 
         if (!response.IsSuccessStatusCode)
