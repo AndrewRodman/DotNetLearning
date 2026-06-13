@@ -25,15 +25,24 @@ public partial class LoginPage : ContentPage
     private async Task AuthenticateAsync(Func<Task<Models.AuthResponse?>> action)
     {
         ErrorLabel.IsVisible = false;
-        var auth = await action();
 
-        if (auth is null)
+        try
         {
-            ErrorLabel.Text = "Login failed. Is TaskApi running? Check username/password.";
-            ErrorLabel.IsVisible = true;
-            return;
-        }
+            var auth = await action();
 
-        await Shell.Current.GoToAsync("//tasks");
+            if (auth is null)
+            {
+                ErrorLabel.Text = "Login failed. Check username/password.";
+                ErrorLabel.IsVisible = true;
+                return;
+            }
+
+            await Shell.Current.GoToAsync("//tasks");
+        }
+        catch (Exception ex)
+        {
+            ErrorLabel.Text = $"Could not reach API. Is TaskApi running on your PC? ({ex.Message})";
+            ErrorLabel.IsVisible = true;
+        }
     }
 }

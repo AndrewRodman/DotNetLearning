@@ -30,6 +30,12 @@ public partial class TasksPage : ContentPage
         await LoadTasksAsync();
     }
 
+    private async void OnRefreshing(object? sender, EventArgs e)
+    {
+        await LoadTasksAsync();
+        TasksRefreshView.IsRefreshing = false;
+    }
+
     private async void OnAddTaskClicked(object? sender, EventArgs e)
     {
         StatusLabel.IsVisible = false;

@@ -20,9 +20,11 @@
             </Picker>
         </HorizontalStackLayout>
 
-        <CollectionView x:Name="TasksCollection"
-                        Grid.Row="1"
-                        SelectionMode="None">
+        <RefreshView x:Name="TasksRefreshView"
+                     Grid.Row="1"
+                     Refreshing="OnRefreshing">
+            <CollectionView x:Name="TasksCollection"
+                            SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:TaskItem">
                     <Border Style="{StaticResource TaskCard}">
@@ -65,7 +67,8 @@
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-        </CollectionView>
+            </CollectionView>
+        </RefreshView>
 
         <VerticalStackLayout Grid.Row="2" Spacing="8">
             <Entry x:Name="NewTitleEntry" Placeholder="New task title" />
