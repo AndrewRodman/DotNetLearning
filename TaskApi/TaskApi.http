@@ -12,7 +12,7 @@ GET {{TaskApi_HostAddress}}/health
 ###
 
 ###############################################
-# STEP 1: Register — RUN THIS FIRST (before Login)
+# STEP 1: Register - RUN THIS FIRST (before Login)
 # Success = JSON with "token". If 409, user exists: try Login.
 # Password must be at least 6 characters.
 ###############################################
@@ -28,7 +28,7 @@ Content-Type: application/json
 ###
 
 ###############################################
-# STEP 2: Login — RUN THIS before any task request
+# STEP 2: Login - RUN THIS before any task request
 # After it succeeds, run step 3 below
 ###############################################
 

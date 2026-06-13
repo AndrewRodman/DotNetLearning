@@ -1,12 +1,12 @@
-# DotNetLearning — Full-Stack Task Manager
+# DotNetLearning - Full-Stack Task Manager
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![CI](https://github.com/AndrewRodman/DotNetLearning/actions/workflows/ci.yml/badge.svg)](https://github.com/AndrewRodman/DotNetLearning/actions/workflows/ci.yml)
 [![Live API](https://img.shields.io/badge/API-live-0078D4?logo=microsoft-azure&logoColor=white)](https://taskapi-andrew.azurewebsites.net)
 
-Portfolio project: ASP.NET Core Web API, .NET MAUI client, SQL Server, JWT auth, and Azure deployment.
+Personal learning project. I built this while moving from VB.NET / Web Forms and older Xamarin/MAUI to current .NET.
 
-Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to modern .NET.
+Stack: ASP.NET Core Web API, .NET MAUI, SQL Server, JWT, Azure App Service + Azure SQL.
 
 ## Live demo
 
@@ -40,9 +40,11 @@ Built while transitioning from VB.NET / ASP.NET Web Forms and Xamarin/MAUI to mo
 - Per-user task isolation (users only see and modify their own tasks)
 - Full CRUD on tasks with optional due dates
 - Optional filter: `GET /api/tasks?isComplete=true|false`
-- MAUI app — login, list tasks, filter (All / Open / Complete), add tasks, optional due date, edit tasks, mark complete, delete tasks (with confirm), pull-to-refresh on mobile + Refresh button (Windows)
-- EF Core migrations (SQLite → SQL Server)
-- **35 tests** — 23 API (18 unit + 5 integration) + 12 MAUI client (`TaskApiService` with mocked HTTP)
+- MAUI: login, task list, filters, add/edit/delete, optional due date, pull-to-refresh on mobile (Refresh button on Windows)
+- EF Core migrations (SQLite -> SQL Server)
+- **35 tests:** 23 API (18 unit + 5 integration) + 12 MAUI client (`TaskApiService` with mocked HTTP)
+
+`TaskApp.Core` is a separate project for shared models and `TaskApiService` - that way `TaskApp.Tests` can test the API client without referencing the full MAUI app.
 
 ## Getting started
 
@@ -63,11 +65,11 @@ dotnet test TaskApp.Tests
 
 ### Run locally (API + MAUI)
 
-**1. API** — set **TaskApi** as startup, press **Ctrl+F5**
+**1. API:** set **TaskApi** as startup, press **Ctrl+F5**
 
 Uses LocalDB via `appsettings.Development.json`. Test with `TaskApi/TaskApi.http`:
 
-1. **Register** → **Login** → task requests
+1. **Register** -> **Login** -> task requests
 
 Reset local database after schema changes:
 
@@ -75,14 +77,14 @@ Reset local database after schema changes:
 .\reset-db.ps1
 ```
 
-**2. MAUI** — F5 **TaskApp** (start TaskApi first for local Debug builds).
+**2. MAUI:** F5 **TaskApp** (start TaskApi first for local Debug builds).
 
 `TaskApp/Configuration/ApiSettings.cs` picks the API URL by build and platform:
 
 | Build | Platform | API URL |
 |-------|----------|---------|
 | Debug | Windows | `http://localhost:5046/` |
-| Debug | Android emulator | `http://10.0.2.2:5046/` (host PC — not `localhost`) |
+| Debug | Android emulator | `http://10.0.2.2:5046/` (host PC, not `localhost`) |
 | Release | Any | `https://taskapi-andrew.azurewebsites.net/` |
 
 Reload tasks via the **Refresh** button (all platforms) or **pull down** on the task list (mobile; works best on Android/iOS).
@@ -133,33 +135,25 @@ TaskApp.Tests/        MAUI client service tests
 
 ```
 MAUI UI (TaskApp)
-  → TaskApiService (TaskApp.Core)
-  → ASP.NET Core API (Azure App Service)
-    → JWT middleware
-    → Controller
-    → Repository
-    → EF Core DbContext
-    → SQL Server (Azure SQL or LocalDB)
+  -> TaskApiService (TaskApp.Core)
+  -> ASP.NET Core API (Azure App Service)
+    -> JWT middleware
+    -> Controller
+    -> Repository
+    -> EF Core DbContext
+    -> SQL Server (Azure SQL or LocalDB)
 ```
 
 ## Configuration
 
-- **Local dev:** `appsettings.Development.json` — LocalDB connection string + dev JWT key
-- **Tests:** `appsettings.Testing.json` — test JWT key (CI uses this)
-- **Azure prod:** App Service **Configuration** → Application settings (not in source control):
-  - `ConnectionStrings__DefaultConnection` — Azure SQL
-  - `Jwt__Key` — production-only secret (32+ characters; overrides `appsettings.json`)
+- **Local dev:** `appsettings.Development.json` - LocalDB connection string + dev JWT key
+- **Tests:** `appsettings.Testing.json` - test JWT key (CI uses this)
+- **Azure prod:** App Service **Configuration** -> Application settings (not in source control):
+  - `ConnectionStrings__DefaultConnection` - Azure SQL
+  - `Jwt__Key` - production-only secret (32+ characters; overrides `appsettings.json`)
 
-`appsettings.json` holds shared JWT settings (issuer, audience) but **no key**. Production must set `Jwt__Key` in Azure or the API will fail to start.
-
-### Secrets: App Service settings vs Azure Key Vault
-
-**This project uses App Service application settings** — you enter `Jwt__Key` and the connection string in the Azure Portal. That is enough for a portfolio or small app.
-
-**Azure Key Vault** is a separate Azure service for storing secrets (keys, passwords, certificates). Teams use it when they need stricter access control, audit logs, or centralized secret rotation. The API would read `Jwt__Key` from the vault at runtime instead of from App Service settings. Same goal (keep secrets out of GitHub); different storage.
-
-Key Vault is **not required** here. App Service settings are the right choice for this project.
+`appsettings.json` has issuer/audience only. No JWT key in git. Set `Jwt__Key` in Azure App Service settings for production.
 
 ## License
 
-MIT — use freely for learning and portfolio reference.
+MIT - use freely for learning and portfolio reference.
