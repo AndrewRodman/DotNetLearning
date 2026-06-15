@@ -1,7 +1,10 @@
 <Solution>
-  <Project Path="TaskApi/TaskApi.csproj" />
   <Project Path="TaskApi.Tests/TaskApi.Tests.csproj" />
+  <Project Path="TaskApi/TaskApi.csproj" />
   <Project Path="TaskApp.Core/TaskApp.Core.csproj" />
-  <Project Path="TaskApp/TaskApp.csproj" />
   <Project Path="TaskApp.Tests/TaskApp.Tests.csproj" />
+  <Project Path="TaskApp/TaskApp.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="TaskWeb/TaskWeb.csproj" Id="93eaf622-4688-4d42-970f-029c5b7aa10d" />
 </Solution>

@@ -135,4 +135,13 @@ public class TaskApiService(HttpClient httpClient, ISessionContext session) : IT
     {
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
+
+    public async Task<TaskItem?> GetTaskByIdAsync(int id)
+    {
+        EnsureAuthHeader();
+      
+        var task = await httpClient.GetFromJsonAsync<TaskItem>($"api/tasks/{id}", JsonOptions);
+
+        return task;
+    }
 }

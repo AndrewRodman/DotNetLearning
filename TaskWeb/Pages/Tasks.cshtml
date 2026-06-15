@@ -1,0 +1,70 @@
+@page
+@model TaskWeb.Pages.TasksModel
+@{
+    ViewData["Title"] = "Tasks";
+}
+
+<div class="page-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+        <h1>Tasks</h1>
+        <p>Your task list from the API</p>
+    </div>
+    <a asp-page="/Create" class="btn btn-primary">New Task</a>
+</div>
+
+<div class="card task-card">
+    <div class="card-body p-0">
+        @if (Model.Tasks.Count == 0)
+        {
+            <div class="p-4 text-center text-muted">
+                <p class="mb-3">No tasks yet.</p>
+                <a asp-page="/Create" class="btn btn-outline-primary btn-sm">Create your first task</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover task-table mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Due</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.Tasks)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="task-title">@t.Title</div>
+                                    @if (!string.IsNullOrWhiteSpace(t.Description))
+                                    {
+                                        <div class="text-muted small">@t.Description</div>
+                                    }
+                                </td>
+                                <td>
+                                    @if (t.IsComplete)
+                                    {
+                                        <span class="badge text-bg-success">Done</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-bg-secondary">Open</span>
+                                    }
+                                </td>
+                                <td>
+                                    @(t.DueDate?.ToString("yyyy-MM-dd") ?? "-")
+                                </td>
+                                <td class="text-end">
+                                    <a asp-page="/Edit" asp-route-id="@t.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -6,7 +6,7 @@
 
 Personal learning project. I built this while moving from VB.NET / Web Forms and older Xamarin/MAUI to current .NET.
 
-Stack: ASP.NET Core Web API, .NET MAUI, SQL Server, JWT, Azure App Service + Azure SQL.
+Stack: ASP.NET Core Web API, .NET MAUI, ASP.NET Core Razor Pages, SQL Server, JWT, Azure App Service + Azure SQL.
 
 ## Live demo
 
@@ -25,7 +25,8 @@ Stack: ASP.NET Core Web API, .NET MAUI, SQL Server, JWT, Azure App Service + Azu
 | Layer | Technology |
 |-------|------------|
 | API | ASP.NET Core Web API (.NET 10) |
-| Client | .NET MAUI (`TaskApp`) |
+| Clients | .NET MAUI (`TaskApp`), Razor Pages (`TaskWeb`) |
+| Shared client | `TaskApp.Core` (models + `TaskApiService`) |
 | Data | EF Core, SQL Server (LocalDB dev / Azure SQL prod) |
 | Auth | JWT Bearer |
 | Cloud | Azure App Service (Free F1) + Azure SQL |
@@ -41,10 +42,11 @@ Stack: ASP.NET Core Web API, .NET MAUI, SQL Server, JWT, Azure App Service + Azu
 - Full CRUD on tasks with optional due dates
 - Optional filter: `GET /api/tasks?isComplete=true|false`
 - MAUI: login, task list, filters, add/edit/delete, optional due date, pull-to-refresh on mobile (Refresh button on Windows)
+- Razor Pages web app: login, register, logout, task list, create/edit (mark complete, optional due date)
 - EF Core migrations (SQLite -> SQL Server)
 - **35 tests:** 23 API (18 unit + 5 integration) + 12 MAUI client (`TaskApiService` with mocked HTTP)
 
-`TaskApp.Core` is a separate project for shared models and `TaskApiService` - that way `TaskApp.Tests` can test the API client without referencing the full MAUI app.
+`TaskApp.Core` holds shared models and `TaskApiService`. Both `TaskApp` and `TaskWeb` call the API through it. `TaskApp.Tests` can test the HTTP client without referencing the full MAUI app.
 
 ## Getting started
 
@@ -89,9 +91,21 @@ Reset local database after schema changes:
 
 Reload tasks via the **Refresh** button (all platforms) or **pull down** on the task list (mobile; works best on Android/iOS).
 
+### Run locally (API + TaskWeb)
+
+**1. API:** start **TaskApi** first (Ctrl+F5).
+
+**2. Web:** F5 **TaskWeb**.
+
+`TaskWeb/appsettings.Development.json` sets `ApiBaseUrl` to `http://localhost:5046/`. The web app stores the JWT in ASP.NET session after login or register.
+
+Pages: `/Login`, `/Register`, `/Tasks`, `/Create`, `/Edit/{id}`.
+
 ### Deployed API (no local API needed)
 
 Build **TaskApp** in **Release** to use the live Azure API without running TaskApi locally.
+
+TaskWeb is set up for local dev against localhost. Point `ApiBaseUrl` at the Azure URL if you want the web app to use the live API.
 
 ## API endpoints
 
@@ -124,8 +138,9 @@ Build **TaskApp** in **Release** to use the live Azure API without running TaskA
 
 ```
 TaskApi/              ASP.NET Core Web API
-TaskApp.Core/         Shared MAUI models + API client service
+TaskApp.Core/         Shared models + API client service
 TaskApp/              .NET MAUI client
+TaskWeb/              Razor Pages web client
 TaskApi.Tests/        API unit + integration tests
 TaskApp.Tests/        MAUI client service tests
 .github/workflows/    CI pipeline
@@ -134,19 +149,20 @@ TaskApp.Tests/        MAUI client service tests
 ## Architecture
 
 ```
-MAUI UI (TaskApp)
-  -> TaskApiService (TaskApp.Core)
-  -> ASP.NET Core API (Azure App Service)
-    -> JWT middleware
-    -> Controller
-    -> Repository
-    -> EF Core DbContext
-    -> SQL Server (Azure SQL or LocalDB)
+MAUI UI (TaskApp)  -----\
+                         ---> TaskApiService (TaskApp.Core) ---> ASP.NET Core API
+Razor Pages (TaskWeb) --/         (HttpClient + JWT)              (Azure App Service)
+                                                                    -> JWT middleware
+                                                                    -> Controller
+                                                                    -> Repository
+                                                                    -> EF Core DbContext
+                                                                    -> SQL Server (Azure SQL or LocalDB)
 ```
 
 ## Configuration
 
 - **Local dev:** `appsettings.Development.json` - LocalDB connection string + dev JWT key
+- **TaskWeb dev:** `TaskWeb/appsettings.Development.json` - `ApiBaseUrl` for local API
 - **Tests:** `appsettings.Testing.json` - test JWT key (CI uses this)
 - **Azure prod:** App Service **Configuration** -> Application settings (not in source control):
   - `ConnectionStrings__DefaultConnection` - Azure SQL

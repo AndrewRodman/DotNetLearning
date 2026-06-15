@@ -10,4 +10,5 @@ public interface ITaskApiService
     Task<TaskItem?> CreateTaskAsync(string title, string? description, DateTime? dueDate);
     Task<TaskItem?> UpdateTaskAsync(TaskItem task);
     Task<bool> DeleteTaskAsync(int id);
+    Task<TaskItem?> GetTaskByIdAsync(int id);
 }

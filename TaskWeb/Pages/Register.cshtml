@@ -1,0 +1,37 @@
+@page
+@model TaskWeb.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="auth-card">
+    <div class="card task-card">
+        <div class="card-body p-4">
+            <div class="page-header text-center mb-4">
+                <h1>Register</h1>
+                <p>Create an account to manage your tasks</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+            }
+
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label">Username</label>
+                    <input asp-for="Username" class="form-control" autocomplete="username" />
+                </div>
+                <div class="mb-4">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password" type="password" class="form-control" autocomplete="new-password" />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Create Account</button>
+            </form>
+
+            <p class="text-center text-muted mt-3 mb-0">
+                Already have an account? <a asp-page="/Login">Login</a>
+            </p>
+        </div>
+    </div>
+</div>
